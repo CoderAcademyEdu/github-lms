@@ -3,14 +3,29 @@
   "version": "1.0.0",
   "description": "",
   "main": "api.js",
+  "engines": {
+    "node": "11.0.0",
+    "npm": "6.4.1"
+  },
   "scripts": {
-    "start": "nodemon api.js"
+    "start": "node api.js",
+    "dev": "nodemon api.js",
+    "heroku-postbuild": "cd client && npm install && npm run build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.16.4"
+    "bcrypt": "^3.0.2",
+    "connect-session-sequelize": "^6.0.0",
+    "dotenv": "^6.2.0",
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "pg": "^7.7.1",
+    "sequelize": "^4.41.2",
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "nodemon": "^1.18.8"
