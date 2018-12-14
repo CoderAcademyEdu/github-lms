@@ -1,35 +1,38 @@
-import React, { Component } from 'react';
-import axios from 'axios';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { Switch, Route, Redirect } from 'react-router-dom';
+import Navbar from './components/navbar';
+import Login from './pages/login';
+import Logout from './pages/logout';
+import Register from './pages/register';
+import Courses from './pages/courses';
+import Lesson from './pages/lesson';
+import NotFound from './pages/notFound';
+import { isAuthenticated } from './utils/authentication';
 
-class App extends Component {
-  componentDidMount() {
-    axios.get('/api')
-      .then(resp => resp.data)
-      .then(data => console.log(data))
-      .catch(error => console.log(error));
-  }
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
-}
+const PrivateRoute = ({ component: Component, ...rest }) => (
+  <Route {...rest} render={(props) => (
+    isAuthenticated()
+      ? <Component {...props} />
+      : <Redirect to={{
+          pathname: '/login',
+          state: { from: props.location }
+        }} />
+  )} />
+)
+
+const App = () => (
+  <div>
+    <Navbar />
+    <Switch>
+      <Route exact path="/" render={ () => <Redirect to="/courses"/> } />
+      <Route path="/login" component={ Login } />
+      <Route path="/register" component={ Register } />
+      <Route path="/logout" component={ Logout } />
+      <PrivateRoute exact path="/courses" component={ Courses } />
+      <PrivateRoute exact path="/lesson" component={ Lesson } />
+      <Route path="/*" component={ NotFound } />
+    </Switch>
+  </div>
+);
 
 export default App;
