@@ -7,6 +7,7 @@ const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const ACL = require('acl');
 
 passport.use(new LocalStrategy(
   { usernameField: 'email' },
@@ -53,6 +54,24 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 app.use(passport.initialize());
 app.use(passport.session());
 
+const isAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    res.locals.user = req.session.user;
+    return next();
+  }
+  return res.status(403).send('Not authorised');
+}
+
+const hasRole = (roles) => {
+  return (req, res, next) => {
+    const { role } = req.user;
+    if (!roles.includes(role)) {
+      return res.status(403).send('Not authorised');
+    }
+    return next();
+  }
+}
+
 app.get('/api', (req, res) => {
   return res.send('API connected');
 });
@@ -69,8 +88,22 @@ app.post('/auth/login', (req, res, next) => {
   })(req, res, next);
 });
 
-app.get('/auth/protected', (req, res) => {
-  if (!req.isAuthenticated()) { return res.status(403).send('Not authorised'); }
+app.get('/auth/logout', (req, res) => {
+  req.logout();
+  return res.send('Logged out');
+});
+
+app.get('/auth/me', isAuthenticated, (req, res) => {
+  return res.send(req.user);
+});
+
+app.get('/auth/protected', isAuthenticated, (req, res) => {
+  db.User.findAll().then(users => {
+    return res.send(users);
+  });
+});
+
+app.get('/teacher', isAuthenticated, hasRole(['teacher']), (req, res) => {
   db.User.findAll().then(users => {
     return res.send(users);
   });
@@ -79,7 +112,6 @@ app.get('/auth/protected', (req, res) => {
 app.post('/auth/register', (req, res, next) => {
   const { email, password } = req.body;
   const hash = bcrypt.hashSync(password, 10);
-  console.log(hash);
   db.User.findOrCreate({
     where: { email },
     defaults: { email, password: hash }
