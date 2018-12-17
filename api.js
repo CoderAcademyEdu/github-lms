@@ -7,15 +7,16 @@ const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const ACL = require('acl');
+const github = require('./utils/github');
 
 passport.use(new LocalStrategy(
   { usernameField: 'email' },
   (email, password, done) => {
+    console.log('this')
     db.User.find({ where: { email } })
       .then(user => {
-        if (!user) { return done(null, false, { message: 'Invalid credentials' }) };
-        if (!bcrypt.compareSync(password, user.password)) { return done(null, false, { message: 'Invalid credentials' }) };
+        if (!user) { return done(null, false, { status: 404, message: 'Invalid credentials' }) };
+        if (!bcrypt.compareSync(password, user.password)) { return done(null, false, { status: 404, message: 'Invalid credentials' }) };
         // valid
         return done(null, user);
       })
@@ -78,9 +79,9 @@ app.get('/api', (req, res) => {
 
 app.post('/auth/login', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
-    if (info) { return res.send(info.message); }
+    if (info) { return res.status(info.status).send(info.message); }
     if (err) { return next(err); }
-    if (!user) { return res.status(401).send('No user found'); }
+    if (!user) { return res.status(404).send('No user found'); }
     req.login(user, (err) => {
       if (err) { return next(err); }
       return res.send('Authenticated!');
@@ -91,6 +92,29 @@ app.post('/auth/login', (req, res, next) => {
 app.get('/auth/logout', (req, res) => {
   req.logout();
   return res.send('Logged out');
+});
+
+app.get('/api/:cohort/modules', isAuthenticated, (req, res) => {
+  github.get('')
+    .then(({ data }) => res.send(data))
+    .catch(error => res.send(error));
+});
+
+app.get('/api/:cohort/modules/:module', isAuthenticated, (req, res) => {
+  const { cohort } = req.params;
+  github.get('')
+    .then(({ data }) => res.send(data))
+    .catch(error => res.send(error));
+});
+
+app.get('/api/:cohort/modules/:module/:lesson', isAuthenticated, (req, res) => {
+  console.log("LOEADED ENDPOINT")
+  const { cohort, module, lesson } = req.params;
+  const url = `/${cohort}/modules/${module}/${lesson}`;
+  console.log(url)
+  github.get(url)
+    .then(({ data }) => res.send(data))
+    .catch(error => res.send(error));
 });
 
 app.get('/auth/me', isAuthenticated, (req, res) => {
