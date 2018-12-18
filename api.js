@@ -147,7 +147,7 @@ app.post('/auth/register', (req, res, next) => {
   const hash = bcrypt.hashSync(password, 10);
   db.User.findOrCreate({
     where: { email },
-    defaults: { email, password: hash }
+    defaults: { email, password: hash, role: 'student' }
   })
     .spread((user, created) => {
       req.login(user, (err) => {

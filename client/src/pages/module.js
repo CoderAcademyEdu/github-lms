@@ -19,9 +19,9 @@ class Module extends Component {
     const { lessons } = this.state;
     const { module } = this.props.match.params;
     return (
-      <>
+      <div>
         { lessons.map((lesson, i) => <Link key={i} to={`/modules/${module}/${lesson.name}`}>{lesson.name}</Link>) }
-      </>
+      </div>
     );
   }
 }
