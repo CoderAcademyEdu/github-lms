@@ -95,23 +95,32 @@ app.get('/auth/logout', (req, res) => {
 });
 
 app.get('/api/:cohort/modules', isAuthenticated, (req, res) => {
-  github.get('')
+  const { cohort } = req.params;
+  const url = `/${cohort}/modules`;
+  github.get(url)
     .then(({ data }) => res.send(data))
     .catch(error => res.send(error));
 });
 
 app.get('/api/:cohort/modules/:module', isAuthenticated, (req, res) => {
-  const { cohort } = req.params;
-  github.get('')
+  const { cohort, module } = req.params;
+  const url = `/${cohort}/modules/${module}`;
+  github.get(url)
     .then(({ data }) => res.send(data))
     .catch(error => res.send(error));
 });
 
 app.get('/api/:cohort/modules/:module/:lesson', isAuthenticated, (req, res) => {
-  console.log("LOEADED ENDPOINT")
   const { cohort, module, lesson } = req.params;
   const url = `/${cohort}/modules/${module}/${lesson}`;
-  console.log(url)
+  github.get(url)
+    .then(({ data }) => res.send(data))
+    .catch(error => res.send(error));
+});
+
+app.get('/api/:cohort/challenges/:module/:challenge', isAuthenticated, (req, res) => {
+  const { cohort, module, challenge } = req.params;
+  const url = `/${cohort}/challenges/${module}/${challenge}`;
   github.get(url)
     .then(({ data }) => res.send(data))
     .catch(error => res.send(error));

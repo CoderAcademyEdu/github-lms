@@ -5,7 +5,7 @@ import { isAuthenticated } from '../utils/authentication';
 const Navbar = (props) => {
   return (
     <nav>
-      <Link to="/course">Course</Link>
+      <Link to="/modules">Home</Link>
       {
         isAuthenticated() &&
           <Link to="/logout">Logout</Link>

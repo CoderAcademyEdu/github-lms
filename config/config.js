@@ -1,4 +1,4 @@
-{
+module.exports = {
   "development": {
     "username": null,
     "password": null,
@@ -14,10 +14,10 @@
     "dialect": "postgres"
   },
   "production": {
-    "username": null,
-    "password": null,
-    "database": "codejo_production",
-    "host": "127.0.0.1",
+    "username": process.env.DB_USER,
+    "password": process.env.DB_PASSWORD,
+    "database": process.env.DB_NAME,
+    "host": process.env.DB_HOST,
     "dialect": "postgres"
   }
 }
