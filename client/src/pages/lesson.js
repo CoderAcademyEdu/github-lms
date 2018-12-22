@@ -3,6 +3,7 @@ import axios from 'axios';
 import frontmatter from 'front-matter';
 import ReactMarkdown from 'react-markdown/with-html';
 import isEqual from 'lodash/isEqual';
+import ReactPlayer from 'react-player'
 import Loading from '../components/loading';
 
 class Lesson extends Component {
@@ -19,7 +20,10 @@ class Lesson extends Component {
     if (cachedContent && cachedContent.body && cachedContent.attributes) {
       this.setState({ body: cachedContent.body, fm: cachedContent.attributes });
     }
-    axios.get(url)
+    const CancelToken = axios.CancelToken;
+    const source = CancelToken.source();
+    this.setState({ promise: source });
+    axios.get(url, { cancelToken: source.token })
       .then(({ data }) => {
         const content = frontmatter(data);
         const { body, attributes: fm } = content;
@@ -33,12 +37,20 @@ class Lesson extends Component {
       .catch(error => console.log(error));
   }
 
+  componentWillUnmount() {
+    const { promise } = this.state;
+    promise && promise.cancel('component was unmounted');
+  }
+
   render() {
     const { body, fm } = this.state;
     return body && fm ? (
       <>
         <h1>{fm.title}</h1>
-        { fm.lecture_video && <video controls="controls" src={`${fm.lecture_video}&html5=true`} /> }
+        {/* {
+          fm.lecture_video
+            && <ReactPlayer url={fm.lecture_video} controls />
+        } */}
         <ReactMarkdown
           source={body}
           escapeHtml={false}

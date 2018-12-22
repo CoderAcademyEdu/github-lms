@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import isEqual from 'lodash/isEqual';
 
 class Module extends Component {
   state = { lessons: [] };
@@ -8,11 +9,28 @@ class Module extends Component {
   componentDidMount() {
     const { REACT_APP_COHORT: cohort } = process.env;
     const { module } = this.props.match.params;
-    axios.get(`/api/${cohort}/modules/${module}`)
+    const url = `/api/${cohort}/modules/${module}`;
+    const cachedContent = JSON.parse(localStorage.getItem(url));
+    if (cachedContent) {
+      this.setState({ lessons: cachedContent });
+    }
+    const CancelToken = axios.CancelToken;
+    const source = CancelToken.source();
+    this.setState({ promise: source });
+    axios.get(url, { cancelToken: source.token })
       .then(({ data }) => {
-        this.setState({ lessons: data })
+        if (!cachedContent
+          || !isEqual(data, cachedContent)) {
+          localStorage.setItem(url, JSON.stringify(data));
+          this.setState({ lessons: data })
+        }
       })
       .catch(error => console.log(error));
+  }
+
+  componentWillUnmount() {
+    const { promise } = this.state;
+    promise && promise.cancel('component was unmounted');
   }
 
   render() {

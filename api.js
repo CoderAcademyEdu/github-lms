@@ -12,7 +12,6 @@ const github = require('./utils/github');
 passport.use(new LocalStrategy(
   { usernameField: 'email' },
   (email, password, done) => {
-    console.log('this')
     db.User.find({ where: { email } })
       .then(user => {
         if (!user) { return done(null, false, { status: 404, message: 'Invalid credentials' }) };
