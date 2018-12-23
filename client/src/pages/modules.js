@@ -2,6 +2,23 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import isEqual from 'lodash/isEqual';
+import styled from 'styled-components';
+
+const Card = styled.div`
+  padding: 20px;
+  background-color: #cfcfcf;
+  font-size: 16px;
+  a, a:visited {
+    color: #333;
+  }
+`;
+
+const Grid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 10px;
+  margin-top: 10px;
+`;
 
 class Modules extends Component {
   state = { modules: [] };
@@ -39,9 +56,19 @@ class Modules extends Component {
   render() {
     const { modules } = this.state;
     return (
-      <>
-        { modules.map((module, i) => <Link key={i} to={`/modules/${module.name}`}>{module.name}</Link>) }
-      </>
+      <Grid>
+        {
+          modules.map((module, i) => {
+            return (
+              <Card key={i}>
+                <Link to={`/modules/${module.name}`}>
+                  {module.name}
+                </Link>
+              </Card>
+            )
+          })
+        }
+      </Grid>
     );
   }
 }
