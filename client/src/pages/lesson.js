@@ -1,32 +1,67 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import fm from 'front-matter';
+import frontmatter from 'front-matter';
 import ReactMarkdown from 'react-markdown/with-html';
+import YouTubePlayer from 'react-player/lib/players/YouTube';
+import isEqual from 'lodash/isEqual';
+import Loading from '../components/loading';
 
 class Lesson extends Component {
-  state = { lesson: null };
+  state = {
+    body: null,
+    fm: null
+  };
 
   componentDidMount() {
     const { REACT_APP_COHORT: cohort } = process.env;
     const { module, lesson } = this.props.match.params;
-    axios.get(`/api/${cohort}/modules/${module}/${lesson}`)
+    const url = `/api/${cohort}/modules/${module}/${lesson}`;
+    const cachedContent = JSON.parse(localStorage.getItem(url));
+    if (cachedContent && cachedContent.body && cachedContent.attributes) {
+      this.setState({ body: cachedContent.body, fm: cachedContent.attributes });
+    }
+    const CancelToken = axios.CancelToken;
+    const source = CancelToken.source();
+    this.setState({ promise: source });
+    axios.get(url, { cancelToken: source.token })
       .then(({ data }) => {
-        const content = fm(data);
-        this.setState({ lesson: content.body });
+        const content = frontmatter(data);
+        const { body, attributes: fm } = content;
+        if (!cachedContent
+          || body !== cachedContent.body
+          || !isEqual(fm, cachedContent.attributes)) {
+          localStorage.setItem(url, JSON.stringify(content));
+          this.setState({ body, fm });
+        }
       })
       .catch(error => console.log(error));
   }
 
+  componentWillUnmount() {
+    const { promise } = this.state;
+    promise && promise.cancel('component was unmounted');
+  }
+
   render() {
-    const { lesson } = this.state;
-    return (
+    const { body, fm } = this.state;
+    return body && fm ? (
       <>
+        <h1>{fm.title}</h1>
+        {
+          fm.lecture_video
+            && <YouTubePlayer
+                  url={fm.lecture_video}
+                  controls
+                  width="100%"
+                  youtubeConfig={{ playerVars: { showinfo: 1 } }}
+                />
+        }
         <ReactMarkdown
-          source={lesson}
+          source={body}
           escapeHtml={false}
         />
       </>
-    );
+    ) : <Loading />;
   }
 }
 
