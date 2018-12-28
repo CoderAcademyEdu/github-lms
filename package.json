@@ -17,14 +17,14 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
-    "bcrypt": "^3.0.2",
     "connect-session-sequelize": "^6.0.0",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "passport": "^0.4.0",
-    "passport-local": "^1.0.0",
+    "passport-github": "^1.1.0",
     "pg": "^7.7.1",
+    "query-string": "^6.2.0",
     "sequelize": "^4.41.2",
     "uuid": "^3.3.2"
   },

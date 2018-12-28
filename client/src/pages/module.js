@@ -33,12 +33,20 @@ class Module extends Component {
     promise && promise.cancel('component was unmounted');
   }
 
+  convertFilePathToDisplay(path) {
+    // removes number at the start of path, extension and replaces _ with " "
+    const indexOfName = path.indexOf('_') + 1;
+    const indexOfExtension = path.indexOf('.');
+    const length = indexOfExtension - indexOfName;
+    return path.substr(indexOfName, length).split('_').join(' ');
+  }
+
   render() {
     const { lessons } = this.state;
     const { module } = this.props.match.params;
     return (
       <div>
-        { lessons.map((lesson, i) => <Link key={i} to={`/modules/${module}/${lesson.name}`}>{lesson.name}</Link>) }
+        { lessons.map((lesson, i) => <Link key={i} to={`/modules/${module}/${lesson.name}`}>{this.convertFilePathToDisplay(lesson.name)}</Link>) }
       </div>
     );
   }

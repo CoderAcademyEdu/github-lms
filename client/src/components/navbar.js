@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, withRouter } from 'react-router-dom';
+import { Link, NavLink, withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import { isAuthenticated } from '../utils/authentication';
 
@@ -12,16 +12,35 @@ const Nav = styled.nav`
     color: white;
   }
   display: flex;
+  align-items: center;
   justify-content: space-between;
 `;
 
+const Img = styled.img`
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+`;
+
+const RightNav = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font-size: 16px;
+`;
+
 const Navbar = (props) => {
+  const user = JSON.parse(localStorage.getItem('user'));
   return (
     <Nav>
-      <NavLink to="/modules">Home</NavLink>
+      <NavLink to="/modules">Modules</NavLink>
       {
-        isAuthenticated() &&
-          <NavLink to="/logout">Logout</NavLink>
+        isAuthenticated() && user &&
+          <RightNav>
+            <Img src={user.image} alt="user profile picture" />
+            <Link to="/logout">Logout</Link>
+          </RightNav>
       }
     </Nav>
   );

@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import frontmatter from 'front-matter';
 import ReactMarkdown from 'react-markdown/with-html';
+import YouTubePlayer from 'react-player/lib/players/YouTube';
 import isEqual from 'lodash/isEqual';
-import ReactPlayer from 'react-player'
 import Loading from '../components/loading';
 
 class Lesson extends Component {
@@ -47,10 +47,15 @@ class Lesson extends Component {
     return body && fm ? (
       <>
         <h1>{fm.title}</h1>
-        {/* {
+        {
           fm.lecture_video
-            && <ReactPlayer url={fm.lecture_video} controls />
-        } */}
+            && <YouTubePlayer
+                  url={fm.lecture_video}
+                  controls
+                  width="100%"
+                  youtubeConfig={{ playerVars: { showinfo: 1 } }}
+                />
+        }
         <ReactMarkdown
           source={body}
           escapeHtml={false}
