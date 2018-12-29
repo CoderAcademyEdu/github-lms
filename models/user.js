@@ -28,6 +28,10 @@ module.exports = (sequelize, DataTypes) => {
   User.associate = function(models) {
     // associations can be defined here
     User.hasMany(models.Session)
+    User.belongsToMany(models.Cohort, {
+      through: 'UserCohort',
+      as: 'cohorts'
+    })
   };
   return User;
 };

@@ -24,7 +24,14 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-  db.User.find({ where: { id } })
+  db.User.find({
+    where: { id },
+    include: {
+      model: db.Cohort,
+      through: db.UserCohort,
+      as: 'cohorts'
+    }
+  })
     .then(user => done(null, user))
     .catch(error => done(error, false));
 });
@@ -68,6 +75,16 @@ const hasRole = (roles) => {
   }
 }
 
+const isEnrolled = (req, res, next) => {
+  const { cohort } = req.params;
+  const { cohorts } = req.user;
+  const userIsNotEnrolled = cohorts.filter(c => c.code === cohort).length === 0;
+  if (userIsNotEnrolled) {
+    return res.status(403).send('Not authorised');
+  }
+  return next();
+}
+
 app.get('/auth/logout', (req, res) => {
   req.logout();
   return res.send('Logged out');
@@ -94,6 +111,11 @@ app.post('/auth/github/callback', (req, res) => {
           const { data: profile } = resp;
           db.User.findOrCreate({
             where: { id: profile.id },
+            include: {
+              model: db.Cohort,
+              through: db.UserCohort,
+              as: 'cohorts'
+            },
             defaults: {
               id: profile.id,
               role: 'student',
@@ -104,16 +126,54 @@ app.post('/auth/github/callback', (req, res) => {
             }
           })
             .spread((user, created) => {
-              req.login(user, (err) => {
-                if (err) { return next(err); }
-                return res.send(user);
-              });
+              // db.Cohort.create({ code: 'M0218' })
+              // .then(cohort => {
+              //   user.addCohort(cohort)
+              //   .then(() => {
+                      req.login(user, (err) => {
+                        if (err) { return next(err); }
+                        return res.send(user);
+                      });
+                      // db.User.findOne({ where: { id: user.id }, include: {
+                      //   model: db.Cohort,
+                      //   through: db.UserCohort,
+                      //   as: 'cohorts'
+                      // },})
+                      //   .then(newOne => {
+                      //     console.log(newOne.cohorts)
+                      //     // console.log(user.cohorts)
+                      //   })
+
+                //     })
+                // })
             });
         });
     });
 });
 
-app.get('/api/:cohort/modules', isAuthenticated, (req, res) => {
+app.post('/auth/:cohort/enrol', isAuthenticated, hasRole(['teacher']), (req, res) => {
+  // TODO: TURN THIS INTO A PROMISE.ALL
+  const { cohort } = req.params;
+  const { login } = req.body;
+  db.User.findOne({
+    where: { login },
+    include: {
+      model: db.Cohort,
+      through: db.UserCohort,
+      as: 'cohorts'
+    }
+  })
+    .then(user => {
+      db.Cohort.findOne({
+        where: { code: cohort }
+      })
+        .then(dbCohort => {
+          user.addCohort(dbCohort);
+        })
+    })
+});
+
+app.get('/api/:cohort/modules', isAuthenticated, isEnrolled, (req, res) => {
   const { cohort } = req.params;
   const url = `/${cohort}/modules`;
   github.get(url)
@@ -149,6 +209,9 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname+'/client/build/index.html'));
 });
 
+// db.sequelize.sync({force: true}).then(() => {
+//   app.listen(port, () => console.log(`API: http://localhost:${port}`));
+// });
 db.sequelize.sync().then(() => {
   app.listen(port, () => console.log(`API: http://localhost:${port}`));
 });

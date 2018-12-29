@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import isEqual from 'lodash/isEqual';
 import { convertFilePathAndExtensionToDisplay } from '../utils/pathToDisplay';
+import { Card } from '../styles/shared';
 
 class Module extends Component {
   state = { lessons: [] };
@@ -38,9 +39,9 @@ class Module extends Component {
     const { lessons } = this.state;
     const { module } = this.props.match.params;
     return (
-      <div>
+      <Card>
         { lessons.map((lesson, i) => <Link key={i} to={`/modules/${module}/${lesson.name}`}>{convertFilePathAndExtensionToDisplay(lesson.name)}</Link>) }
-      </div>
+      </Card>
     );
   }
 }

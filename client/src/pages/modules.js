@@ -4,12 +4,7 @@ import { Link } from 'react-router-dom';
 import isEqual from 'lodash/isEqual';
 import styled from 'styled-components';
 import { convertFilePathToDisplay } from '../utils/pathToDisplay';
-
-const Card = styled.div`
-  padding: 20px;
-  background-color: #cfcfcf;
-  font-size: 16px;
-`;
+import { Card } from '../styles/shared';
 
 const Grid = styled.div`
   display: grid;
@@ -43,9 +38,10 @@ class Modules extends Component {
         }
       })
       .catch(error => {
-        // console.log(error)
-        // DO SOMETHING HERE
-        // this.setState({ error: error.response.message })
+        if (error.response.status === 403) {
+          const msg = "You have not been enroled in this cohort. Please ask a teacher to enrol you 🙂";
+          this.setState({ error: msg });
+        }
       });
   }
 
@@ -55,21 +51,24 @@ class Modules extends Component {
   }
 
   render() {
-    const { modules } = this.state;
+    const { modules, error } = this.state;
     return (
-      <Grid>
-        {
-          modules.map((module, i) => {
-            return (
-              <Link key={i} to={`/modules/${module.name}`}>
-                <Card>
-                  {convertFilePathToDisplay(module.name)}
-                </Card>
-              </Link>
-            )
-          })
-        }
-      </Grid>
+      <>
+        {error && <p>{error}</p>}
+        <Grid>
+          {
+            modules.map((module, i) => {
+              return (
+                <Link key={i} to={`/modules/${module.name}`}>
+                  <Card>
+                    {convertFilePathToDisplay(module.name)}
+                  </Card>
+                </Link>
+              )
+            })
+          }
+        </Grid>
+      </>
     );
   }
 }
