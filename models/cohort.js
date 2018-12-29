@@ -21,6 +21,11 @@ module.exports = (sequelize, DataTypes) => {
       through: 'UserCohort',
       as: 'users'
     })
+    Cohort.findByCode = (code) => {
+      return Cohort.findOne({
+        where: { code }
+      });
+    }
   };
   return Cohort;
 };

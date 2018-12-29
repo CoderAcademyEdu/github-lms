@@ -10,6 +10,7 @@ import Lesson from './pages/lesson';
 import Github from './pages/github';
 import Challenge from './pages/challenge';
 import NotFound from './pages/notFound';
+import Enrolment from './pages/enrolment';
 import { isAuthenticated } from './utils/authentication';
 import styled from 'styled-components';
 
@@ -56,6 +57,7 @@ const App = () => (
         <PrivateRoute exact path="/modules/:module" component={ Module } />
         <PrivateRoute exact path="/modules/:module/:lesson" component={ Lesson } />
         <PrivateRoute exact path="/challenges/:module/:challenge" component={ Challenge } />
+        <PrivateRoute exact path="/enrolment" component={ Enrolment } />
         <Route path="/*" component={ NotFound } />
       </Switch>
     </Page>

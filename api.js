@@ -152,25 +152,41 @@ app.post('/auth/github/callback', (req, res) => {
 });
 
 app.post('/auth/:cohort/enrol', isAuthenticated, hasRole(['teacher']), (req, res) => {
-  // TODO: TURN THIS INTO A PROMISE.ALL
   const { cohort } = req.params;
   const { login } = req.body;
-  db.User.findOne({
-    where: { login },
+  Promise.all([
+    db.User.findByLogin(login),
+    db.Cohort.findByCode(cohort)
+  ])
+    .then(([user, dbCohort]) => {
+      user.addCohort(dbCohort)
+        .then(() => res.send(`Enrolled ${login} in ${cohort}`));
+    });
+});
+
+app.post('/auth/:cohort/unenrol', isAuthenticated, hasRole(['teacher']), (req, res) => {
+  const { cohort } = req.params;
+  const { login } = req.body;
+  Promise.all([
+    db.User.findByLogin(login),
+    db.Cohort.findByCode(cohort)
+  ])
+    .then(([user, dbCohort]) => {
+      user.removeCohort(dbCohort)
+        .then(() => res.send(`Unenrolled ${login} from ${cohort}`));
+    });
+});
+
+app.get('/api/students', isAuthenticated, hasRole(['teacher']), (req, res) => {
+  db.User.findAll({
+    where: { role: 'student' },
     include: {
       model: db.Cohort,
       through: db.UserCohort,
       as: 'cohorts'
     }
   })
-    .then(user => {
-      db.Cohort.findOne({
-        where: { code: cohort }
-      })
-        .then(dbCohort => {
-          user.addCohort(dbCohort);
-        })
-    })
+    .then(students => res.send(students));
 });
 
 app.get('/api/:cohort/modules', isAuthenticated, isEnrolled, (req, res) => {

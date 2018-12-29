@@ -32,6 +32,16 @@ module.exports = (sequelize, DataTypes) => {
       through: 'UserCohort',
       as: 'cohorts'
     })
+    User.findByLogin = (login) => {
+      return User.findOne({
+        where: { login },
+        include: {
+          model: models.Cohort,
+          through: models.UserCohort,
+          as: 'cohorts'
+        }
+      });
+    }
   };
   return User;
 };

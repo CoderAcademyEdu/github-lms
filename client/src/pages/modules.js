@@ -39,7 +39,7 @@ class Modules extends Component {
       })
       .catch(error => {
         if (error.response.status === 403) {
-          const msg = "You have not been enroled in this cohort. Please ask a teacher to enrol you 🙂";
+          const msg = "You have not been enrolled in this cohort. Please ask a teacher to enrol you 🙂";
           this.setState({ error: msg });
         }
       });
