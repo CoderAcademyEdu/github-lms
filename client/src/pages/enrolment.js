@@ -35,7 +35,12 @@ class Enrolment extends Component {
         });
         this.setState({ students });
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        if (error.response.status === 403) {
+          const msg = "You are not authorised to modify enrolments 🙂";
+          this.setState({ error: msg });
+        }
+      });
   }
 
   componentDidMount() {
@@ -75,17 +80,24 @@ class Enrolment extends Component {
 
   render() {
     const { REACT_APP_COHORT: cohort } = process.env;
-    const { students } = this.state;
-    return (students.length > 0)
-      ? (
-        <>
-          <h1>Enrol students in {cohort}</h1>
-          <Grid>
-            { students.map(this.renderStudent) }
-          </Grid>
-        </>
-      )
-      : <Loading />;
+    const { students, error } = this.state;
+    return (
+      <>
+        {error && <p>{error}</p>}
+        {
+          (students.length > 0)
+            ? (
+              <>
+                <h1>Enrol students in {cohort}</h1>
+                <Grid>
+                  { students.map(this.renderStudent) }
+                </Grid>
+              </>
+            )
+            : (!error) ? <Loading /> : null
+        }
+      </>
+    );
   }
 }
 

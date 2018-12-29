@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import isEqual from 'lodash/isEqual';
 import { convertFilePathAndExtensionToDisplay } from '../utils/pathToDisplay';
 import { Card } from '../styles/shared';
+import Loading from '../components/loading';
 
 class Module extends Component {
   state = { lessons: [] };
@@ -38,11 +39,11 @@ class Module extends Component {
   render() {
     const { lessons } = this.state;
     const { module } = this.props.match.params;
-    return (
+    return (lessons.length > 0) ? (
       <Card>
         { lessons.map((lesson, i) => <Link key={i} to={`/modules/${module}/${lesson.name}`}>{convertFilePathAndExtensionToDisplay(lesson.name)}</Link>) }
       </Card>
-    );
+    ) : <Loading />
   }
 }
 
