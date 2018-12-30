@@ -6,7 +6,7 @@ import { isAuthenticated, isTeacher } from '../utils/authentication';
 const Nav = styled.nav`
   flex-shrink: 0;
   padding: 20px;
-  background-color: #222;
+  background-color: rgb(95, 165, 194);
   font-size: 24px;
   a, a:visited {
     text-decoration: none;

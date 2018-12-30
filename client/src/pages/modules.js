@@ -5,11 +5,12 @@ import isEqual from 'lodash/isEqual';
 import styled from 'styled-components';
 import { convertFilePathToDisplay } from '../utils/pathToDisplay';
 import { Card } from '../styles/shared';
+import Loading from '../components/loading';
 
 const Grid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 10px;
+  grid-gap: 20px;
   a, a:visited {
     color: #333;
   }
@@ -54,19 +55,23 @@ class Modules extends Component {
     return (
       <>
         {error && <p>{error}</p>}
-        <Grid>
-          {
-            modules.map((module, i) => {
-              return (
-                <Link key={i} to={`/modules/${module.name}`}>
-                  <Card>
-                    {convertFilePathToDisplay(module.name)}
-                  </Card>
-                </Link>
-              )
-            })
-          }
-        </Grid>
+        { modules.length > 0
+          ? (
+            <Grid>
+              {
+                modules.map((module, i) => {
+                  return (
+                    <Link key={i} to={`/modules/${module.name}`}>
+                      <Card>
+                        {convertFilePathToDisplay(module.name)}
+                      </Card>
+                    </Link>
+                  )
+                })
+              }
+            </Grid>
+          ) : <Loading />
+        }
       </>
     );
   }

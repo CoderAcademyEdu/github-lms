@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { FullScreen, Rotating } from '../styles/shared';
+import githubLogo from '../images/github-logo.svg';
 
 class Github extends Component {
   componentDidMount() {
@@ -16,9 +18,10 @@ class Github extends Component {
 
   render() {
     return (
-      <div>
-        Authenticating with Github
-      </div>
+      <FullScreen>
+        <Rotating src={ githubLogo } width="50px" alt="Github logo" />
+        Authenticating
+      </FullScreen>
     );
   }
 }

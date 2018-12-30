@@ -8,13 +8,16 @@ const LoginPage = styled.a`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  &:visited {
+    color: inherit;
+  }
+  font-size: 32px;
 `;
 
 const Login = (props) => {
   return (
     <LoginPage href="/auth/login">
       <img src={ githubLogo } width="50px" alt="Github logo" />
-      <br />
       Login with Github
     </LoginPage>
   );

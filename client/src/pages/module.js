@@ -40,9 +40,15 @@ class Module extends Component {
     const { lessons } = this.state;
     const { module } = this.props.match.params;
     return (lessons.length > 0) ? (
-      <Card>
-        { lessons.map((lesson, i) => <Link key={i} to={`/modules/${module}/${lesson.name}`}>{convertFilePathAndExtensionToDisplay(lesson.name)}</Link>) }
-      </Card>
+      <>
+        { lessons.map((lesson, i) => (
+          <Link key={i} to={`/modules/${module}/${lesson.name}`}>
+            <Card>
+              {convertFilePathAndExtensionToDisplay(lesson.name)}
+            </Card>
+          </Link>
+        ))}
+      </>
     ) : <Loading />
   }
 }
