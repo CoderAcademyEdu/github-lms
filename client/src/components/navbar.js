@@ -4,9 +4,10 @@ import styled from 'styled-components';
 import { isAuthenticated, isTeacher } from '../utils/authentication';
 
 const Nav = styled.nav`
+  flex-shrink: 0;
   padding: 20px;
   background-color: #222;
-  font-size: 32px;
+  font-size: 24px;
   a, a:visited {
     text-decoration: none;
     color: white;
@@ -22,7 +23,7 @@ const Img = styled.img`
   border-radius: 50%;
 `;
 
-const RightNav = styled.div`
+const Logout = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -30,17 +31,44 @@ const RightNav = styled.div`
   font-size: 16px;
 `;
 
+const RightNav = styled.div`
+  display: flex;
+  flex-grow: 0.2;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+const LeftNav = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 32px;
+`;
+
+const ActiveLink = styled(NavLink)`
+  &.active {
+    border-bottom: 2px solid #afafaf;
+  }
+  transition : border-bottom 0.2s ease;
+`;
+
 const Navbar = (props) => {
   const user = JSON.parse(localStorage.getItem('user'));
   return (
     <Nav>
-      <NavLink to="/modules">Modules</NavLink>
-      { isTeacher() && <NavLink to="/enrolment">Enrolment</NavLink>}
+      <LeftNav>
+        <NavLink to="/modules">{process.env.REACT_APP_COHORT}</NavLink>
+      </LeftNav>
       {
         isAuthenticated() && user &&
           <RightNav>
-            <Img src={user.image} alt="user profile picture" />
-            <Link to="/logout">Logout</Link>
+            <ActiveLink to="/modules">Modules</ActiveLink>
+            <ActiveLink to="/tickets">Tickets</ActiveLink>
+            { isTeacher() && <ActiveLink to="/enrolment">Enrolment</ActiveLink>}
+            <Logout>
+              <Img src={user.image} alt="user profile picture" />
+              <Link to="/logout">Logout</Link>
+            </Logout>
           </RightNav>
       }
     </Nav>

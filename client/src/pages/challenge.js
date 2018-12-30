@@ -4,6 +4,7 @@ import frontmatter from 'front-matter';
 import ReactMarkdown from 'react-markdown/with-html';
 import isEqual from 'lodash/isEqual';
 import Loading from '../components/loading';
+import styled from 'styled-components';
 
 class Challenge extends Component {
   state = {

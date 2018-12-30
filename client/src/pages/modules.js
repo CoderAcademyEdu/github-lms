@@ -10,7 +10,6 @@ const Grid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-gap: 10px;
-  margin-top: 10px;
   a, a:visited {
     color: #333;
   }
@@ -38,7 +37,7 @@ class Modules extends Component {
         }
       })
       .catch(error => {
-        if (error.response.status === 403) {
+        if (error.response && error.response.status === 403) {
           const msg = "You have not been enrolled in this cohort. Please ask a teacher to enrol you 🙂";
           this.setState({ error: msg });
         }
