@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import isEqual from 'lodash/isEqual';
+import { convertFilePathAndExtensionToDisplay } from '../utils/pathToDisplay';
+import { Card } from '../styles/shared';
+import Loading from '../components/loading';
 
 class Module extends Component {
   state = { lessons: [] };
@@ -33,22 +36,14 @@ class Module extends Component {
     promise && promise.cancel('component was unmounted');
   }
 
-  convertFilePathToDisplay(path) {
-    // removes number at the start of path, extension and replaces _ with " "
-    const indexOfName = path.indexOf('_') + 1;
-    const indexOfExtension = path.indexOf('.');
-    const length = indexOfExtension - indexOfName;
-    return path.substr(indexOfName, length).split('_').join(' ');
-  }
-
   render() {
     const { lessons } = this.state;
     const { module } = this.props.match.params;
-    return (
-      <div>
-        { lessons.map((lesson, i) => <Link key={i} to={`/modules/${module}/${lesson.name}`}>{this.convertFilePathToDisplay(lesson.name)}</Link>) }
-      </div>
-    );
+    return (lessons.length > 0) ? (
+      <Card>
+        { lessons.map((lesson, i) => <Link key={i} to={`/modules/${module}/${lesson.name}`}>{convertFilePathAndExtensionToDisplay(lesson.name)}</Link>) }
+      </Card>
+    ) : <Loading />
   }
 }
 

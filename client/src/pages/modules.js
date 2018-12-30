@@ -3,21 +3,17 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import isEqual from 'lodash/isEqual';
 import styled from 'styled-components';
-
-const Card = styled.div`
-  padding: 20px;
-  background-color: #cfcfcf;
-  font-size: 16px;
-  a, a:visited {
-    color: #333;
-  }
-`;
+import { convertFilePathToDisplay } from '../utils/pathToDisplay';
+import { Card } from '../styles/shared';
 
 const Grid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-gap: 10px;
   margin-top: 10px;
+  a, a:visited {
+    color: #333;
+  }
 `;
 
 class Modules extends Component {
@@ -42,9 +38,10 @@ class Modules extends Component {
         }
       })
       .catch(error => {
-        // console.log(error)
-        // DO SOMETHING HERE
-        // this.setState({ error: error.response.message })
+        if (error.response.status === 403) {
+          const msg = "You have not been enrolled in this cohort. Please ask a teacher to enrol you 🙂";
+          this.setState({ error: msg });
+        }
       });
   }
 
@@ -54,21 +51,24 @@ class Modules extends Component {
   }
 
   render() {
-    const { modules } = this.state;
+    const { modules, error } = this.state;
     return (
-      <Grid>
-        {
-          modules.map((module, i) => {
-            return (
-              <Card key={i}>
-                <Link to={`/modules/${module.name}`}>
-                  {module.name}
+      <>
+        {error && <p>{error}</p>}
+        <Grid>
+          {
+            modules.map((module, i) => {
+              return (
+                <Link key={i} to={`/modules/${module.name}`}>
+                  <Card>
+                    {convertFilePathToDisplay(module.name)}
+                  </Card>
                 </Link>
-              </Card>
-            )
-          })
-        }
-      </Grid>
+              )
+            })
+          }
+        </Grid>
+      </>
     );
   }
 }

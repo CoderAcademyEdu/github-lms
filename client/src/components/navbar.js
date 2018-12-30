@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, NavLink, withRouter } from 'react-router-dom';
 import styled from 'styled-components';
-import { isAuthenticated } from '../utils/authentication';
+import { isAuthenticated, isTeacher } from '../utils/authentication';
 
 const Nav = styled.nav`
   padding: 20px;
@@ -35,6 +35,7 @@ const Navbar = (props) => {
   return (
     <Nav>
       <NavLink to="/modules">Modules</NavLink>
+      { isTeacher() && <NavLink to="/enrolment">Enrolment</NavLink>}
       {
         isAuthenticated() && user &&
           <RightNav>
