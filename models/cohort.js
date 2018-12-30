@@ -22,9 +22,13 @@ module.exports = (sequelize, DataTypes) => {
       as: 'users'
     })
     Cohort.findByCode = (code) => {
-      return Cohort.findOne({
-        where: { code }
-      });
+      return Cohort.findOrCreate({
+        where: { code },
+        defaults: { code }
+      })
+        .spread((cohort, created) => {
+          return cohort;
+        });
     }
   };
   return Cohort;
