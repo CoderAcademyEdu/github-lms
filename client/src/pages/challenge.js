@@ -48,14 +48,18 @@ class Challenge extends Component {
   }
 
   render() {
-    const { body, loading, error } = this.state;
+    const { body, fm, loading, error } = this.state;
     if (error) return <Error msg={error} />;
     if (loading) return <Loading />;
+    const { title } = fm;
     return (
-      <ReactMarkdown
-        source={body}
-        escapeHtml={false}
-      />
+      <>
+        { title && <h1>{title}</h1> }
+        <ReactMarkdown
+          source={body}
+          escapeHtml={false}
+        />
+      </>
     );
   }
 }
