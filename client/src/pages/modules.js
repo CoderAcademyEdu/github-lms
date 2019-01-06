@@ -5,19 +5,23 @@ import isEqual from 'lodash/isEqual';
 import styled from 'styled-components';
 import { convertFilePathToDisplay } from '../utils/pathToDisplay';
 import { Card } from '../styles/shared';
+import Loading from '../components/loading';
+import Error from '../components/error';
 
 const Grid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 10px;
-  margin-top: 10px;
+  grid-gap: 20px;
   a, a:visited {
     color: #333;
   }
 `;
 
 class Modules extends Component {
-  state = { modules: [] };
+  state = {
+    loading: true,
+    modules: []
+  };
 
   componentDidMount() {
     const { REACT_APP_COHORT: cohort } = process.env;
@@ -31,18 +35,21 @@ class Modules extends Component {
     this.setState({ promise: source });
     axios.get(url, { cancelToken: source.token })
       .then(({ data }) => {
+        document.title = `${cohort} - Modules`;
         if (!cachedContent
           || !isEqual(data, cachedContent)) {
           localStorage.setItem(url, JSON.stringify(data));
-          this.setState({ modules: data })
+          this.setState({ modules: data });
         }
       })
       .catch(error => {
-        if (error.response.status === 403) {
-          const msg = "You have not been enrolled in this cohort. Please ask a teacher to enrol you 🙂";
-          this.setState({ error: msg });
+        let msg = "ERROR!";
+        if (error.response && error.response.status === 403) {
+          msg = "You have not been enrolled in this cohort. Please ask a teacher to enrol you 🙂";
         }
-      });
+        this.setState({ error: msg });
+      })
+      .finally(() => this.setState({ loading: false }));
   }
 
   componentWillUnmount() {
@@ -51,24 +58,23 @@ class Modules extends Component {
   }
 
   render() {
-    const { modules, error } = this.state;
+    const { modules, error, loading } = this.state;
+    if (error) return <Error msg={error} />;
+    if (loading) return <Loading />;
     return (
-      <>
-        {error && <p>{error}</p>}
-        <Grid>
-          {
-            modules.map((module, i) => {
-              return (
-                <Link key={i} to={`/modules/${module.name}`}>
-                  <Card>
-                    {convertFilePathToDisplay(module.name)}
-                  </Card>
-                </Link>
-              )
-            })
-          }
-        </Grid>
-      </>
+      <Grid>
+        {
+          modules.map((module, i) => {
+            return (
+              <Link key={i} to={`/modules/${module.name}`}>
+                <Card>
+                  {convertFilePathToDisplay(module.name)}
+                </Card>
+              </Link>
+            )
+          })
+        }
+      </Grid>
     );
   }
 }

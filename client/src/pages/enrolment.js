@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Loading from '../components/loading';
 import styled from 'styled-components';
+import Error from '../components/error';
 
 const Student = styled.div`
   display: flex;
@@ -21,7 +22,10 @@ const Grid = styled.div`
 `;
 
 class Enrolment extends Component {
-  state = { students: [] };
+  state = {
+    students: [],
+    loading: true
+  };
 
   fetchStudents() {
     const url = `/api/students`;
@@ -36,14 +40,18 @@ class Enrolment extends Component {
         this.setState({ students });
       })
       .catch(error => {
+        let msg = "ERROR!";
         if (error.response.status === 403) {
-          const msg = "You are not authorised to modify enrolments 🙂";
-          this.setState({ error: msg });
+          msg = "You are not authorised to modify enrolments 🙂";
         }
-      });
+        this.setState({ error: msg });
+      })
+      .finally(() => this.setState({ loading: false }));
   }
 
   componentDidMount() {
+    const { REACT_APP_COHORT: cohort } = process.env;
+    document.title = `${cohort} - Enrolment`;
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
     this.setState({ promise: source }, this.fetchStudents);
@@ -80,22 +88,15 @@ class Enrolment extends Component {
 
   render() {
     const { REACT_APP_COHORT: cohort } = process.env;
-    const { students, error } = this.state;
+    const { students, error, loading } = this.state;
+    if (error) return <Error msg={error} />;
+    if (loading) return <Loading />;
     return (
       <>
-        {error && <p>{error}</p>}
-        {
-          (students.length > 0)
-            ? (
-              <>
-                <h1>Enrol students in {cohort}</h1>
-                <Grid>
-                  { students.map(this.renderStudent) }
-                </Grid>
-              </>
-            )
-            : (!error) ? <Loading /> : null
-        }
+        <h1>Enrol students in {cohort}</h1>
+        <Grid>
+          { students.map(this.renderStudent) }
+        </Grid>
       </>
     );
   }

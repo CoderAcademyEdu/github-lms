@@ -5,11 +5,13 @@ import ReactMarkdown from 'react-markdown/with-html';
 import YouTubePlayer from 'react-player/lib/players/YouTube';
 import isEqual from 'lodash/isEqual';
 import Loading from '../components/loading';
+import Error from '../components/error';
 
 class Lesson extends Component {
   state = {
     body: null,
-    fm: null
+    fm: null,
+    loading: true
   };
 
   componentDidMount() {
@@ -24,17 +26,25 @@ class Lesson extends Component {
     const source = CancelToken.source();
     this.setState({ promise: source });
     axios.get(url, { cancelToken: source.token })
-      .then(({ data }) => {
-        const content = frontmatter(data);
-        const { body, attributes: fm } = content;
-        if (!cachedContent
-          || body !== cachedContent.body
-          || !isEqual(fm, cachedContent.attributes)) {
+    .then(({ data }) => {
+      const content = frontmatter(data);
+      const { body, attributes: fm } = content;
+      if (fm && fm.title) document.title = `${cohort} - ${fm.title}`;
+      if (!cachedContent
+        || body !== cachedContent.body
+        || !isEqual(fm, cachedContent.attributes)) {
           localStorage.setItem(url, JSON.stringify(content));
           this.setState({ body, fm });
         }
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        let msg = "ERROR!";
+        if (error.response && error.response.status === 403) {
+          msg = "You have not been enrolled in this cohort. Please ask a teacher to enrol you 🙂";
+        }
+        this.setState({ error: msg });
+      })
+      .finally(() => this.setState({ loading: false }))
   }
 
   componentWillUnmount() {
@@ -42,26 +52,42 @@ class Lesson extends Component {
     promise && promise.cancel('component was unmounted');
   }
 
-  render() {
-    const { body, fm } = this.state;
-    return body && fm ? (
+  renderFrontMatter() {
+    const { title, lecture_video } = this.state.fm;
+    return (
       <>
-        <h1>{fm.title}</h1>
-        {
-          fm.lecture_video
-            && <YouTubePlayer
-                  url={fm.lecture_video}
-                  controls
-                  width="100%"
-                  youtubeConfig={{ playerVars: { showinfo: 1 } }}
-                />
+        { title && <h1>{title}</h1> }
+        { lecture_video &&
+            <YouTubePlayer
+              url={lecture_video}
+              controls
+              width="100%"
+              config={{
+                youtube: {
+                  playerVars: { showinfo: 1 }
+                }
+              }}
+            />
         }
-        <ReactMarkdown
-          source={body}
-          escapeHtml={false}
-        />
       </>
-    ) : <Loading />;
+    )
+  }
+
+  render() {
+    const { body, fm, loading, error } = this.state;
+    if (error) return <Error msg={error} />;
+    if (loading) return <Loading />;
+    return (
+      <>
+        { fm && this.renderFrontMatter() }
+        { body &&
+            <ReactMarkdown
+              source={body}
+              escapeHtml={false}
+            />
+        }
+      </>
+    );
   }
 }
 
