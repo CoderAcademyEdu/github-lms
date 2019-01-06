@@ -61,7 +61,11 @@ class Lesson extends Component {
               url={lecture_video}
               controls
               width="100%"
-              youtubeConfig={{ playerVars: { showinfo: 1 } }}
+              config={{
+                youtube: {
+                  playerVars: { showinfo: 1 }
+                }
+              }}
             />
         }
       </>
