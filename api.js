@@ -24,7 +24,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-  db.User.find({
+  db.User.findOne({
     where: { id },
     include: {
       model: db.Cohort,

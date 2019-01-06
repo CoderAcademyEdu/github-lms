@@ -4,7 +4,7 @@ import Navbar from './components/navbar';
 import Login from './components/login';
 import Logout from './components/logout';
 import Modules from './pages/modules';
-import Module from './pages/module';
+import Lessons from './pages/lessons';
 import Lesson from './pages/lesson';
 import Github from './pages/github';
 import Challenge from './pages/challenge';
@@ -62,7 +62,7 @@ const App = () => (
           <Route path="/logout" component={ Logout } />
           <Route path="/github/callback" component={ Github } />
           <PrivateRoute exact path="/modules" component={ Modules } />
-          <PrivateRoute exact path="/modules/:module" component={ Module } />
+          <PrivateRoute exact path="/modules/:module" component={ Lessons } />
           <PrivateRoute exact path="/modules/:module/:lesson" component={ Lesson } />
           <PrivateRoute exact path="/challenges/:module/:challenge" component={ Challenge } />
           <PrivateRoute exact path="/enrolment" component={ Enrolment } />

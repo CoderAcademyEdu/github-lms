@@ -5,9 +5,13 @@ import isEqual from 'lodash/isEqual';
 import { convertFilePathAndExtensionToDisplay } from '../utils/pathToDisplay';
 import { Card } from '../styles/shared';
 import Loading from '../components/loading';
+import Error from '../components/error';
 
-class Module extends Component {
-  state = { lessons: [] };
+class Lessons extends Component {
+  state = {
+    lessons: [],
+    loading: true
+  };
 
   componentDidMount() {
     const { REACT_APP_COHORT: cohort } = process.env;
@@ -28,7 +32,14 @@ class Module extends Component {
           this.setState({ lessons: data })
         }
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        let msg = "ERROR!";
+        if (error.response && error.response.status === 403) {
+          msg = "You have not been enrolled in this cohort. Please ask a teacher to enrol you 🙂";
+        }
+        this.setState({ error: msg });
+      })
+      .finally(() => this.setState({ loading: false }));
   }
 
   componentWillUnmount() {
@@ -37,20 +48,20 @@ class Module extends Component {
   }
 
   render() {
-    const { lessons } = this.state;
+    const { lessons, loading, error } = this.state;
     const { module } = this.props.match.params;
-    return (lessons.length > 0) ? (
-      <>
-        { lessons.map((lesson, i) => (
-          <Link key={i} to={`/modules/${module}/${lesson.name}`}>
-            <Card>
-              {convertFilePathAndExtensionToDisplay(lesson.name)}
-            </Card>
-          </Link>
-        ))}
-      </>
-    ) : <Loading />
+    if (error) return <Error msg={error} />;
+    if (loading) return <Loading />;
+    return (
+      lessons.map((lesson, i) => (
+        <Link key={i} to={`/modules/${module}/${lesson.name}`}>
+          <Card>
+            {convertFilePathAndExtensionToDisplay(lesson.name)}
+          </Card>
+        </Link>
+      ))
+    );
   }
 }
 
-export default Module;
+export default Lessons;

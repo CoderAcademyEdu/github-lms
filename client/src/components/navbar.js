@@ -63,7 +63,6 @@ const Navbar = (props) => {
         isAuthenticated() && user &&
           <RightNav>
             <ActiveLink to="/modules">Modules</ActiveLink>
-            <ActiveLink to="/tickets">Tickets</ActiveLink>
             { isTeacher() && <ActiveLink to="/enrolment">Enrolment</ActiveLink>}
             <Logout>
               <Img src={user.image} alt="user profile picture" />

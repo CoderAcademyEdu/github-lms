@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import { FullScreen, Rotating } from '../styles/shared';
 import githubLogo from '../images/github-logo.svg';
+
 const handleLogout = (props) => {
   axios.get('/auth/logout')
     .then(resp => {
