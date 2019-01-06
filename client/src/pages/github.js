@@ -5,7 +5,11 @@ import githubLogo from '../images/github-logo.svg';
 import Error from '../components/error';
 
 class Github extends Component {
+  state = {};
+
   componentDidMount() {
+    const { REACT_APP_COHORT: cohort } = process.env;
+    document.title = `${cohort} - Authenticating`;
     const { search } = this.props.location;
     const idx = search.indexOf('=') + 1;
     const code = search.substr(idx);

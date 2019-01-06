@@ -8,6 +8,9 @@ const Message = styled.p`
 `;
 
 const Error = ({ msg }) => {
+  const { REACT_APP_COHORT: cohort } = process.env;
+  document.title = `${cohort} - Error`;
+
   return (
     <FullScreen>
       <FontAwesomeIcon icon="ambulance" size="2x" />

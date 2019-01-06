@@ -35,6 +35,7 @@ class Modules extends Component {
     this.setState({ promise: source });
     axios.get(url, { cancelToken: source.token })
       .then(({ data }) => {
+        document.title = `${cohort} - Modules`;
         if (!cachedContent
           || !isEqual(data, cachedContent)) {
           localStorage.setItem(url, JSON.stringify(data));

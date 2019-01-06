@@ -11,10 +11,13 @@ const LoginPage = styled.a`
   &:visited {
     color: inherit;
   }
-  font-size: 32px;
+  font-size: 24px;
 `;
 
 const Login = (props) => {
+  const { REACT_APP_COHORT: cohort } = process.env;
+  document.title = `${cohort} - Login`;
+
   return (
     <LoginPage href="/auth/login">
       <img src={ githubLogo } width="50px" alt="Github logo" />

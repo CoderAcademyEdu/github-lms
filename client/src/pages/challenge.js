@@ -24,6 +24,7 @@ class Challenge extends Component {
       .then(({ data }) => {
         const content = frontmatter(data);
         const { body, attributes: fm } = content;
+        if (fm && fm.title) document.title = `${cohort} - ${fm.title}`;
         if (!cachedContent
           || body !== cachedContent.body
           || !isEqual(fm, cachedContent.attributes)) {

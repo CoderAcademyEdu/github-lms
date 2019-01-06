@@ -50,6 +50,8 @@ class Enrolment extends Component {
   }
 
   componentDidMount() {
+    const { REACT_APP_COHORT: cohort } = process.env;
+    document.title = `${cohort} - Enrolment`;
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
     this.setState({ promise: source }, this.fetchStudents);

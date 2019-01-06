@@ -26,12 +26,13 @@ class Lesson extends Component {
     const source = CancelToken.source();
     this.setState({ promise: source });
     axios.get(url, { cancelToken: source.token })
-      .then(({ data }) => {
-        const content = frontmatter(data);
-        const { body, attributes: fm } = content;
-        if (!cachedContent
-          || body !== cachedContent.body
-          || !isEqual(fm, cachedContent.attributes)) {
+    .then(({ data }) => {
+      const content = frontmatter(data);
+      const { body, attributes: fm } = content;
+      if (fm && fm.title) document.title = `${cohort} - ${fm.title}`;
+      if (!cachedContent
+        || body !== cachedContent.body
+        || !isEqual(fm, cachedContent.attributes)) {
           localStorage.setItem(url, JSON.stringify(content));
           this.setState({ body, fm });
         }

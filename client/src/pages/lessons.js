@@ -26,6 +26,7 @@ class Lessons extends Component {
     this.setState({ promise: source });
     axios.get(url, { cancelToken: source.token })
       .then(({ data }) => {
+        document.title = `${cohort} - Lessons`;
         if (!cachedContent
           || !isEqual(data, cachedContent)) {
           localStorage.setItem(url, JSON.stringify(data));
