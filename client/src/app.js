@@ -12,6 +12,10 @@ import NotFound from './components/notFound';
 import Enrolment from './pages/enrolment';
 import { isAuthenticated } from './utils/authentication';
 import styled from 'styled-components';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faAmbulance } from '@fortawesome/free-solid-svg-icons';
+
+library.add(faAmbulance);
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={(props) => (
