@@ -4,13 +4,10 @@ import frontmatter from 'front-matter';
 import ReactMarkdown from 'react-markdown/with-html';
 import isEqual from 'lodash/isEqual';
 import Loading from '../components/loading';
-import styled from 'styled-components';
+import Error from '../components/error';
 
 class Challenge extends Component {
-  state = {
-    body: null,
-    fm: null
-  };
+  state = { loading: true };
 
   componentDidMount() {
     const { REACT_APP_COHORT: cohort } = process.env;
@@ -34,7 +31,14 @@ class Challenge extends Component {
             this.setState({ body, fm });
         }
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        let msg = "ERROR!";
+        if (error.response && error.response.status === 403) {
+          msg = "You have not been enrolled in this cohort. Please ask a teacher to enrol you 🙂";
+        }
+        this.setState({ error: msg });
+      })
+      .finally(() => this.setState({ loading: false }));
   }
 
   componentWillUnmount() {
@@ -43,15 +47,15 @@ class Challenge extends Component {
   }
 
   render() {
-    const { body, fm } = this.state;
-    return body && fm ? (
-      <>
-        <ReactMarkdown
-          source={body}
-          escapeHtml={false}
-        />
-      </>
-    ) : <Loading />;
+    const { body, loading, error } = this.state;
+    if (error) return <Error msg={error} />;
+    if (loading) return <Loading />;
+    return (
+      <ReactMarkdown
+        source={body}
+        escapeHtml={false}
+      />
+    );
   }
 }
 
