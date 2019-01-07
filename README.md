@@ -1,6 +1,6 @@
-# Codejo
+# GitHub LMS
 
-An open-source LMS for content hosted in GitHub markdown files
+An open-source LMS that authenticates with GitHub and uses it for content management
 
 ## Development
 
@@ -17,11 +17,11 @@ createdb codejo_development
 ### Running Development Environment Locally
 
 ```
-git clone https://github.com/dijonmusters/codejo.git
+git clone https://github.com/dijonmusters/github-lms.git
 ```
 
 ```
-cd codejo
+cd github-lms
 npm install
 touch .env
 npm run dev
