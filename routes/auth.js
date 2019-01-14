@@ -12,7 +12,9 @@ passport.use(new GithubStrategy({
   clientSecret: process.env.GITHUB_CLIENT_SECRET,
   callbackURL: process.env.GITHUB_CALLBACK
 }, (accessToken, refreshToken, profile, done) => {
-  console.log('AUTHENTICATING');
+  // This is not being used currently
+  // POST `/github/callback` handles this logic
+  console.log('Running github strategy callback');
   done();
 }));
 
@@ -21,14 +23,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((id, done) => {
-  db.User.findOne({
-    where: { id },
-    include: {
-      model: db.Cohort,
-      through: db.UserCohort,
-      as: 'cohorts'
-    }
-  })
+  db.User.findById(id)
     .then(user => done(null, user))
     .catch(error => done(error, false));
 });
@@ -38,48 +33,37 @@ router.get('/logout', (req, res) => {
   return res.send('Logged out');
 });
 
-router.get('/login', passport.authenticate('github', { scope: [ 'user:email'] }));
+router.get('/login', passport.authenticate('github', { scope: ['user:email'] }));
 
-router.post('/github/callback', (req, res) => {
-  const { code } = req.body;
-  axios.post('https://github.com/login/oauth/access_token', {
+const getAccessToken = async (code) => {
+  return axios.post('https://github.com/login/oauth/access_token', {
     client_id: process.env.GITHUB_CLIENT_ID,
     client_secret: process.env.GITHUB_CLIENT_SECRET,
     code: code
-  })
-    .then(resp => {
-      const params = queryString.parse(resp.data);
-      const options = {
-        headers: {
-          Authorization: `token ${params.access_token}`
-        }
-      }
-      axios.get('https://api.github.com/user', options)
-        .then(resp => {
-          const { data: profile } = resp;
-          db.User.findOrCreate({
-            where: { id: profile.id },
-            include: {
-              model: db.Cohort,
-              through: db.UserCohort,
-              as: 'cohorts'
-            },
-            defaults: {
-              id: profile.id,
-              role: 'student',
-              email: profile.email,
-              image: profile.avatar_url,
-              login: profile.login,
-              name: profile.name
-            }
-          })
-            .spread((user, created) => {
-              req.login(user, (err) => {
-                if (err) { return next(err); }
-                return res.send(user);
-              });
-            });
-        });
+  });
+}
+
+const getUserProfile = async (accessToken) => {
+  const options = {
+    headers: {
+      Authorization: `token ${accessToken}`
+    }
+  }
+  return axios.get('https://api.github.com/user', options);
+}
+
+router.post('/github/callback', async (req, res) => {
+  const { code } = req.body;
+  const accessTokenResponse = await getAccessToken(code);
+  const accessToken = queryString.parse(accessTokenResponse.data).access_token;
+  const userProfileResponse = await getUserProfile(accessToken);
+  const profile = userProfileResponse.data;
+  db.User.findOrCreateByProfile(profile)
+    .spread((user, created) => {
+      req.login(user, (err) => {
+        if (err) { return next(err); }
+        return res.send(user);
+      });
     });
 });
 
