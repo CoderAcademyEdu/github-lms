@@ -12,7 +12,6 @@ import Error from '../components/error';
 const Grid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 20px;
   a, a:visited {
     color: #333;
   }
