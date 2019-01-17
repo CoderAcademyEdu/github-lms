@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Helmet } from 'react-helmet';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import isEqual from 'lodash/isEqual';
@@ -26,7 +27,6 @@ class Lessons extends Component {
     this.setState({ promise: source });
     axios.get(url, { cancelToken: source.token })
       .then(({ data }) => {
-        document.title = `${cohort} - Lessons`;
         if (!cachedContent
           || !isEqual(data, cachedContent)) {
           localStorage.setItem(url, JSON.stringify(data));
@@ -54,13 +54,20 @@ class Lessons extends Component {
     if (error) return <Error msg={error} />;
     if (loading) return <Loading />;
     return (
-      lessons.map((lesson, i) => (
-        <Link key={i} to={`/modules/${module}/${lesson.name}`}>
-          <Card>
-            {convertFilePathAndExtensionToDisplay(lesson.name)}
-          </Card>
-        </Link>
-      ))
+      <>
+        <Helmet>
+          <title>{process.env.REACT_APP_COHORT} - Lessons</title>
+        </Helmet>
+        {
+          lessons.map((lesson, i) => (
+            <Link key={i} to={`/modules/${module}/${lesson.name}`}>
+              <Card>
+                {convertFilePathAndExtensionToDisplay(lesson.name)}
+              </Card>
+            </Link>
+          ))
+        }
+      </>
     );
   }
 }

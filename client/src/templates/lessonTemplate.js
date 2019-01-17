@@ -1,4 +1,5 @@
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import YouTubePlayer from 'react-player/lib/players/YouTube';
 import ReactMarkdown from 'react-markdown/with-html';
 
@@ -6,6 +7,9 @@ const renderFrontMatter = (fm) => {
   const { title, lecture_video } = fm;
   return (
     <>
+      <Helmet>
+        <title>{process.env.REACT_APP_COHORT} - {title}</title>
+      </Helmet>
       { title && <h1>{title}</h1> }
       { lecture_video &&
           <YouTubePlayer
