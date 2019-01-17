@@ -28,16 +28,20 @@ class Enrolment extends Component {
     loading: true
   };
 
+  reverseSort = (data) => {
+    return data.sort((a, b) => {
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
+      return (dateA > dateB) ? -1 : 1;
+    });
+  }
+
   fetchStudents() {
     const url = `/api/students`;
     const { promise } = this.state;
     axios.get(url, { cancelToken: promise.token })
       .then(({ data }) => {
-        const students = data.sort((a, b) => {
-          const dateA = new Date(a.createdAt);
-          const dateB = new Date(b.createdAt);
-          return (dateA > dateB) ? -1 : 1;
-        });
+        const students = this.reverseSort(data);
         this.setState({ students });
       })
       .catch(error => {
@@ -51,7 +55,6 @@ class Enrolment extends Component {
   }
 
   componentDidMount() {
-    const { REACT_APP_COHORT: cohort } = process.env;
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
     this.setState({ promise: source }, this.fetchStudents);
