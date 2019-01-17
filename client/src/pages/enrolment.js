@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Helmet } from 'react-helmet';
 import axios from 'axios';
 import Loading from '../components/loading';
 import styled from 'styled-components';
@@ -51,7 +52,6 @@ class Enrolment extends Component {
 
   componentDidMount() {
     const { REACT_APP_COHORT: cohort } = process.env;
-    document.title = `${cohort} - Enrolment`;
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
     this.setState({ promise: source }, this.fetchStudents);
@@ -93,6 +93,9 @@ class Enrolment extends Component {
     if (loading) return <Loading />;
     return (
       <>
+        <Helmet>
+          <title>{process.env.REACT_APP_COHORT} - Enrolment</title>
+        </Helmet>
         <h1>Enrol students in {cohort}</h1>
         <Grid>
           { students.map(this.renderStudent) }
