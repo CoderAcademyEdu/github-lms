@@ -70,6 +70,25 @@ module.exports = (sequelize, DataTypes) => {
         }
       });
     }
+    User.findAllStudents = () => {
+      return User.findAll({
+        where: { role: 'student' },
+        include: {
+          model: models.Cohort,
+          through: models.UserCohort,
+          as: 'cohorts'
+        }
+      });
+    }
+    User.findAllUsers = () => {
+      return User.findAll({
+        include: {
+          model: models.Cohort,
+          through: models.UserCohort,
+          as: 'cohorts'
+        }
+      });
+    }
   };
   return User;
 };

@@ -9,15 +9,13 @@ router.use(isAuthenticated);
 router.use(isEnrolled);
 
 router.get('/students', hasRole(['teacher']), (req, res) => {
-  db.User.findAll({
-    where: { role: 'student' },
-    include: {
-      model: db.Cohort,
-      through: db.UserCohort,
-      as: 'cohorts'
-    }
-  })
+  db.User.findAllStudents()
     .then(students => res.send(students));
+});
+
+router.get('/users', hasRole(['teacher']), (req, res) => {
+  db.User.findAllUsers()
+    .then(users => res.send(users));
 });
 
 router.get('/:cohort/modules', (req, res) => {

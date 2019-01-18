@@ -87,9 +87,19 @@ router.post('/:cohort/unenrol', isAuthenticated, hasRole(['teacher']), (req, res
     db.User.findByLogin(login),
     db.Cohort.findByCode(cohort)
   ])
-    .then(([user, dbCohort]) => {
-      user.removeCohort(dbCohort)
-        .then(() => res.send(`Unenrolled ${login} from ${cohort}`));
+  .then(([user, dbCohort]) => {
+    user.removeCohort(dbCohort)
+    .then(() => res.send(`Unenrolled ${login} from ${cohort}`));
+  });
+});
+
+router.put('/users/:login/role', isAuthenticated, hasRole(['teacher']), (req, res) => {
+  const { login } = req.params;
+  const { role } = req.body;
+  db.User.findByLogin(login)
+    .then(user => {
+      user.update({ role })
+        .then(() => res.send(`${login} is now a ${role}`));
     });
 });
 
