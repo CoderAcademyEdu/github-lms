@@ -25,6 +25,7 @@
     "passport-github": "^1.1.0",
     "pg": "^7.7.1",
     "query-string": "^6.2.0",
+    "request": "^2.88.0",
     "sequelize": "^4.41.2",
     "uuid": "^3.3.2"
   },

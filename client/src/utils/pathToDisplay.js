@@ -2,6 +2,10 @@ const convertUnderscoresToSpaces = (words) => {
   return words.split('_').join(' ');
 }
 
+const convertSpacesToUnderscores = (words) => {
+  return words.split(' ').join('_');
+}
+
 const convertFilePathToDisplay = (path) => {
   const indexOfName = path.indexOf('_') + 1;
   const pathName = path.substr(indexOfName);
@@ -16,5 +20,6 @@ const convertFilePathAndExtensionToDisplay = (path) => {
 
 export {
   convertFilePathToDisplay,
-  convertFilePathAndExtensionToDisplay
+  convertFilePathAndExtensionToDisplay,
+  convertSpacesToUnderscores
 }

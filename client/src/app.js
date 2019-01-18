@@ -13,9 +13,9 @@ import Enrolment from './pages/enrolment';
 import { isAuthenticated } from './utils/authentication';
 import styled from 'styled-components';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { faAmbulance } from '@fortawesome/free-solid-svg-icons';
+import { faAmbulance, faDownload } from '@fortawesome/free-solid-svg-icons';
 
-library.add(faAmbulance);
+library.add(faAmbulance, faDownload);
 
 const PrivateRoute = ({ component: Component, ...rest }) => (
   <Route {...rest} render={(props) => (

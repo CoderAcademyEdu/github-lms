@@ -42,6 +42,53 @@ module.exports = (sequelize, DataTypes) => {
         }
       });
     }
+    User.findById = (id) => {
+      return User.findOne({
+        where: { id },
+        include: {
+          model: models.Cohort,
+          through: models.UserCohort,
+          as: 'cohorts'
+        }
+      });
+    }
+    User.findOrCreateByProfile = (profile) => {
+      return User.findOrCreate({
+        where: { id: profile.id },
+        include: {
+          model: models.Cohort,
+          through: models.UserCohort,
+          as: 'cohorts'
+        },
+        defaults: {
+          id: profile.id,
+          role: 'student',
+          email: profile.email,
+          image: profile.avatar_url,
+          login: profile.login,
+          name: profile.name
+        }
+      });
+    }
+    User.findAllStudents = () => {
+      return User.findAll({
+        where: { role: 'student' },
+        include: {
+          model: models.Cohort,
+          through: models.UserCohort,
+          as: 'cohorts'
+        }
+      });
+    }
+    User.findAllUsers = () => {
+      return User.findAll({
+        include: {
+          model: models.Cohort,
+          through: models.UserCohort,
+          as: 'cohorts'
+        }
+      });
+    }
   };
   return User;
 };

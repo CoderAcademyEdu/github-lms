@@ -1,0 +1,33 @@
+const isAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    res.locals.user = req.session.user;
+    return next();
+  }
+  return res.status(403).send('Not authorised');
+}
+
+const hasRole = (roles) => {
+  return (req, res, next) => {
+    const { role } = req.user;
+    if (!roles.includes(role)) {
+      return res.status(403).send('Not authorised');
+    }
+    return next();
+  }
+}
+
+const isEnrolled = (req, res, next) => {
+  const { cohort } = req.params;
+  const { cohorts, role } = req.user;
+  const userIsEnrolled = cohorts.filter(c => c.code === cohort).length > 0;
+  if (userIsEnrolled || role === 'teacher' || role === 'admin') {
+    return next();
+  }
+  return res.status(403).send('Not authorised');
+}
+
+module.exports = {
+  isAuthenticated,
+  hasRole,
+  isEnrolled
+};

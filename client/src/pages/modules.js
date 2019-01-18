@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Helmet } from 'react-helmet';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import isEqual from 'lodash/isEqual';
@@ -11,7 +12,6 @@ import Error from '../components/error';
 const Grid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 20px;
   a, a:visited {
     color: #333;
   }
@@ -35,7 +35,6 @@ class Modules extends Component {
     this.setState({ promise: source });
     axios.get(url, { cancelToken: source.token })
       .then(({ data }) => {
-        document.title = `${cohort} - Modules`;
         if (!cachedContent
           || !isEqual(data, cachedContent)) {
           localStorage.setItem(url, JSON.stringify(data));
@@ -62,19 +61,24 @@ class Modules extends Component {
     if (error) return <Error msg={error} />;
     if (loading) return <Loading />;
     return (
-      <Grid>
-        {
-          modules.map((module, i) => {
-            return (
-              <Link key={i} to={`/modules/${module.name}`}>
-                <Card>
-                  {convertFilePathToDisplay(module.name)}
-                </Card>
-              </Link>
-            )
-          })
-        }
-      </Grid>
+      <>
+        <Helmet>
+          <title>{process.env.REACT_APP_COHORT} - Modules</title>
+        </Helmet>
+        <Grid>
+          {
+            modules.map((module, i) => {
+              return (
+                <Link key={i} to={`/modules/${module.name}`}>
+                  <Card>
+                    {convertFilePathToDisplay(module.name)}
+                  </Card>
+                </Link>
+              )
+            })
+          }
+        </Grid>
+      </>
     );
   }
 }
