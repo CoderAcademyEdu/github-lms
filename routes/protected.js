@@ -6,7 +6,6 @@ const db = require('../models/index');
 const request = require('request');
 
 router.use(isAuthenticated);
-router.use(isEnrolled);
 
 router.get('/students', hasRole(['teacher']), (req, res) => {
   db.User.findAllStudents()
@@ -18,7 +17,7 @@ router.get('/users', hasRole(['teacher']), (req, res) => {
     .then(users => res.send(users));
 });
 
-router.get('/:cohort/modules', (req, res) => {
+router.get('/:cohort/modules', isEnrolled, (req, res) => {
   const { cohort } = req.params;
   const url = `/${cohort}/modules`;
   github.get(url)
@@ -26,7 +25,7 @@ router.get('/:cohort/modules', (req, res) => {
     .catch(error => res.send(error));
 });
 
-router.get('/:cohort/modules/:module', (req, res) => {
+router.get('/:cohort/modules/:module', isEnrolled, (req, res) => {
   const { cohort, module } = req.params;
   const url = `/${cohort}/modules/${module}`;
   github.get(url)
@@ -34,7 +33,7 @@ router.get('/:cohort/modules/:module', (req, res) => {
     .catch(error => res.send(error));
 });
 
-router.get('/:cohort/modules/:module/:lesson', (req, res) => {
+router.get('/:cohort/modules/:module/:lesson', isEnrolled, (req, res) => {
   const { cohort, module, lesson } = req.params;
   const url = `/${cohort}/modules/${module}/${lesson}`;
   github.get(url)
@@ -42,7 +41,7 @@ router.get('/:cohort/modules/:module/:lesson', (req, res) => {
     .catch(error => res.send(error));
 });
 
-router.get('/:cohort/challenges/:module/:challenge', (req, res) => {
+router.get('/:cohort/challenges/:module/:challenge', isEnrolled, (req, res) => {
   const { cohort, module, challenge } = req.params;
   const url = `/${cohort}/challenges/${module}/${challenge}`;
   github.get(url)
@@ -50,7 +49,7 @@ router.get('/:cohort/challenges/:module/:challenge', (req, res) => {
     .catch(error => res.send(error));
 });
 
-router.get('/:cohort/code/:module/:file', (req, res) => {
+router.get('/:cohort/code/:module/:file', isEnrolled, (req, res) => {
   const { GITHUB_BASE_URL: githubUrl, GITHUB_TOKEN: token } = process.env;
   const { cohort, module, file } = req.params;
   const url = `${githubUrl}/${cohort}/code/${module}/${file}`;

@@ -19,11 +19,12 @@ const hasRole = (roles) => {
 const isEnrolled = (req, res, next) => {
   const { cohort } = req.params;
   const { cohorts, role } = req.user;
+
   const userIsEnrolled = cohorts.filter(c => c.code === cohort).length > 0;
   if (userIsEnrolled || role === 'teacher' || role === 'admin') {
     return next();
   }
-  return res.status(403).send('Not authorised - Enrolled');
+  return res.status(403).send('Not authorised - Enrolment');
 }
 
 module.exports = {
