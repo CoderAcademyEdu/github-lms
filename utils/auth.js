@@ -3,14 +3,14 @@ const isAuthenticated = (req, res, next) => {
     res.locals.user = req.session.user;
     return next();
   }
-  return res.status(403).send('Not authorised');
+  return res.status(403).send('Not authorised - Authentication');
 }
 
 const hasRole = (roles) => {
   return (req, res, next) => {
     const { role } = req.user;
     if (!roles.includes(role)) {
-      return res.status(403).send('Not authorised');
+      return res.status(403).send('Not authorised - Role');
     }
     return next();
   }
@@ -23,7 +23,7 @@ const isEnrolled = (req, res, next) => {
   if (userIsEnrolled || role === 'teacher' || role === 'admin') {
     return next();
   }
-  return res.status(403).send('Not authorised');
+  return res.status(403).send('Not authorised - Enrolled');
 }
 
 module.exports = {
