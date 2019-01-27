@@ -1,11 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const github = require('../utils/github');
-const { isAuthenticated, hasRole, isEnrolled } = require('../utils/auth');
+const { hasRole, isEnrolled } = require('../utils/auth');
 const db = require('../models/index');
 const request = require('request');
-
-router.use(isAuthenticated);
 
 router.get('/students', hasRole(['teacher']), (req, res) => {
   db.User.findAllStudents()

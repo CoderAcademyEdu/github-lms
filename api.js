@@ -4,11 +4,13 @@ const path = require('path');
 const uuid = require('uuid/v4');
 const session = require('express-session');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
-const passport = require('passport');
 const db = require('./models/index');
+const passport = require('./config/passport');
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+const oneHr = 1000 * 60 * 60;
 
 const sessionOptions = session({
   genid: (req) => {
@@ -19,7 +21,10 @@ const sessionOptions = session({
     db: db.sequelize
   }),
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: true,
+  cookie: {
+    maxAge: oneHr
+  }
 });
 
 app.use(sessionOptions);
@@ -27,7 +32,6 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'client/build')));
 app.use(passport.initialize());
 app.use(passport.session());
-
 app.use(require('./routes'));
 
 db.sequelize.sync().then(() => {

@@ -2,31 +2,9 @@ const express = require('express');
 const axios = require('axios');
 const queryString = require('query-string');
 const passport = require('passport');
-const GithubStrategy = require('passport-github').Strategy;
 const router = express.Router();
 const db = require('../models/index');
-const { isAuthenticated, hasRole } = require('../utils/auth');
-
-passport.use(new GithubStrategy({
-  clientID: process.env.GITHUB_CLIENT_ID,
-  clientSecret: process.env.GITHUB_CLIENT_SECRET,
-  callbackURL: process.env.GITHUB_CALLBACK
-}, (accessToken, refreshToken, profile, done) => {
-  // This is not being used currently
-  // POST `/github/callback` handles this logic
-  console.log('Running github strategy callback');
-  done();
-}));
-
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-
-passport.deserializeUser((id, done) => {
-  db.User.findById(id)
-    .then(user => done(null, user))
-    .catch(error => done(error, false));
-});
+const { hasRole } = require('../utils/auth');
 
 router.get('/logout', (req, res) => {
   req.logout();
@@ -67,7 +45,7 @@ router.post('/github/callback', async (req, res) => {
     });
 });
 
-router.post('/:cohort/enrol', isAuthenticated, hasRole(['teacher']), (req, res) => {
+router.post('/:cohort/enrol', hasRole(['teacher']), (req, res) => {
   const { cohort } = req.params;
   const { login } = req.body;
   Promise.all([
@@ -80,7 +58,7 @@ router.post('/:cohort/enrol', isAuthenticated, hasRole(['teacher']), (req, res) 
     });
 });
 
-router.post('/:cohort/unenrol', isAuthenticated, hasRole(['teacher']), (req, res) => {
+router.post('/:cohort/unenrol', hasRole(['teacher']), (req, res) => {
   const { cohort } = req.params;
   const { login } = req.body;
   Promise.all([
@@ -93,7 +71,7 @@ router.post('/:cohort/unenrol', isAuthenticated, hasRole(['teacher']), (req, res
   });
 });
 
-router.put('/users/:login/role', isAuthenticated, hasRole(['teacher']), (req, res) => {
+router.put('/users/:login/role', hasRole(['teacher']), (req, res) => {
   const { login } = req.params;
   const { role } = req.body;
   db.User.findByLogin(login)
