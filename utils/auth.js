@@ -1,5 +1,4 @@
 const isAuthenticated = (req, res, next) => {
-  req.session.touch();
   return req.isAuthenticated()
     ? next()
     : res.status(403).send('Not authorised - Authentication');
@@ -30,7 +29,15 @@ const isEnrolled = (req, res, next) => {
   })
 }
 
+const refreshCookie = (req, res, next) => {
+  if (req.session) {
+    req.session.nowInMinutes = Date.now() / 60e3;
+  }
+  next();
+}
+
 module.exports = {
   hasRole,
-  isEnrolled
+  isEnrolled,
+  refreshCookie
 };
