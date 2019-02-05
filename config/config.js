@@ -2,14 +2,14 @@ module.exports = {
   "development": {
     "username": null,
     "password": null,
-    "database": "codejo_development",
+    "database": "gh_lms_development",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "test": {
     "username": null,
     "password": null,
-    "database": "codejo_test",
+    "database": "gh_lms_test",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
