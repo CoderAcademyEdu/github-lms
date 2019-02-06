@@ -131,7 +131,10 @@ GITHUB_CALLBACK='http://localhost:3000/github/callback'
 `GITHUB_CALLBACK` should be set to `http://localhost:3000/github/callback` in the `.env` file.
 
 Populate the client/.env file with:
-REACT_APP_COHORT='<cohort-code>'
+
+```
+REACT_APP_COHORT="<cohort-code>"
+```
 
 The value should be set to the Cohort code - `MELB_2018` for example.
 
@@ -178,7 +181,9 @@ When postgres database has loaded in another tab, click `Settings` then `Reveal 
 Create new Github OAuth credentials for deployment - see `Development` section for steps to complete this.
 
 Application Name: MELB_2018
+
 Homepage URL: https://melb_2018.herokuapp.com
+
 Authorization callback URL: https://melb_2018.herokuapp.com/github/callback
 
 Set Heroku environment variables - see `Development` section for more information about each of the environment variables.
@@ -218,3 +223,5 @@ UPDATE "Users" SET "role" = 'teacher' WHERE "login" = '<your-login>';
 ```
 
 Logout of the melb_2018 app and login again. You should now see the modules and enrolment options in the navbar.
+
+Now that you have one teacher they should be able to promote other users to teachers from the enrolment page - you should only need to run the SQL update statement above for the first teacher account.
