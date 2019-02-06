@@ -8,6 +8,86 @@ An open-source LMS that authenticates with GitHub and uses a separate private re
 
 Install [PostgreSQL](https://www.postgresql.org/download/)
 
+A private GitHub repository, either on a personal or organisation account, to use for managing educational materials. This repo will need to implement the following folder structure:
+
+```
+cohort-code
+  challenges
+    module_name
+      challenge.md files
+  code
+    module_name
+      code_example.zip files
+  modules
+    module_name
+        lesson.md files
+
+```
+
+The outer most folder should be named with the cohort code. This will be something you will need throughout the development and deployment sections so make sure you pick something you are happy with. Our example repo uses the code `M0218`.
+
+Inside the cohort folder there should be three folders named `challenges`, `code` and `modules`. This can be extended later, but they are the only three directories that the current iteration of the app has access to.
+
+Inside each of these folders should be a folder for every module in the course with a sequential number followed by the name of the module - for example `01_Ruby`, `02_Rails` and `03_MERN`. This same folder structure should exist in all three of these folders and is how we will keep a track of the different modules we are currently teaching, making it easy to share particular modules between different courses, or easily deprecate a particular module that we no longer want to include in a course.
+
+Inside the `cohort-code/challenges/module-name` folder there should be a collection of markdown files that are individual challenges. You can now link to a challenge from a lesson to make it available to students.
+
+Inside the `cohort-code/code/module-name` folder there should be a collection of zip files that are individual code examples - for example one .zip for the starter code before a lesson and another one for the final version after the lesson. You can then link to these files from a lesson to make them available to students.
+
+Inside the `cohort-code/modules/module-name` folder there should be a collection of markdown files that are individual lessons that are student facing. Each one of these markdown files should be named with a sequence number and then the name of the lesson - for example `01_fetch_and_promises.md`. Each one of these files is one instance of a lesson so should contain any student facing content that you want students to access - lecture video, example code zip files, walkthrough steps, links to related challenges and further reading/watching resources.
+
+Example lesson.md file
+
+```
+---
+title: Passport, Sessions and Cookies
+lecture_video: https://youtu.be/18ZBXBgGa8M
+downloads:
+  - name: example code
+    url: ../../code/06_MERN/passport_sessions_example.zip
+---
+
+## Walkthrough
+
+Watch through the video to see how Passport can be used to implement sessions and cookies in a node API.
+
+## Challenges
+
+1. [Re-implement the passport example in your own project](../../challenges/06_MERN/reimplement_passport_example.md)
+
+## Further Reading
+
+Check out [this awesome search engine](http://google.com) to find answers to any questions!
+```
+
+The section at the top of the file is called `frontmatter`, it is basically a collection of varibales that we can then access in the frontend. We are setting a title, lecture video and downloads that we want to make available for this lesson. `Title` is the only one that is required, `lecture_video` and `downloads` are optional and should be entirely removed if there is no video or downloads for a particular lesson.
+
+Everything below the frontmatter will be converted to HTML and displayed by the frontend.
+
+Example challenge.md file
+
+```
+---
+title: Implement Registration
+---
+
+## Challenge
+
+Extend the authentication example by implementing a new registration route. This should allow the user to send a `POST` request to `/auth/register` with their `username` and `password` in the body of the request.
+
+The callback should do the following:
+
+    * Validate the user has provided a username and password
+    * Confirm the user does not already exist in MongoDB
+    * Create a new user in MongoDB
+    * Generate a token
+    * Return the token or a valid error if these conditions are not met
+
+Confirm this works with Postman and that the generated token can be used to access protected routes.
+```
+
+Again this has some frontmatter, which is currently just a mandatory title. Similarly to the lesson.md file everything below the frontmatter section will be converted to html and rendered by the frontend.
+
 ### Running Development Environment Locally
 
 ```
