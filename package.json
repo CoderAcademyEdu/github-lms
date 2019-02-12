@@ -10,7 +10,8 @@
   "scripts": {
     "start": "node api.js",
     "dev": "nodemon api.js",
-    "heroku-postbuild": "cd client && npm install && npm run build"
+    "heroku-postbuild": "cd client && npm install && npm run build",
+    "heroku-config": "heroku config:set $(cat .env.production | sed '/^$/d; /#[[:print:]]*$/d')"
   },
   "keywords": [],
   "author": "",
