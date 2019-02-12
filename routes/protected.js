@@ -63,7 +63,7 @@ router.get('/:cohort/code/:module/:file', isEnrolled, (req, res) => {
     .pipe(res);
 });
 
-router.post('/attendance/signin', isEnrolled, async (req, res) => {
+router.post('/:cohort/attendance/signin', isEnrolled, async (req, res) => {
   const { CAMPUS_IP: campusIp } = process.env;
   const date = new Date(req.body.date);
   const { data: userIp } = await axios.get('https://api.ipify.org');
@@ -79,7 +79,7 @@ router.post('/attendance/signin', isEnrolled, async (req, res) => {
     .then(resp => res.send('Successfully signed in'))
 });
 
-router.get('/attendance/last-signin', isEnrolled, async (req, res) => {
+router.get('/:cohort/attendance/last-signin', isEnrolled, async (req, res) => {
   db.Attendance.findOne({
     limit: 1,
     where: { UserId: req.user.id},

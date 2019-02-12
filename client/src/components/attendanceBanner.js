@@ -27,7 +27,8 @@ class AttendanceBanner extends Component {
   state = { loadingAttendance: true };
 
   fetchLastSignin() {
-    const url = `/api/attendance/last-signin`;
+    const { REACT_APP_COHORT: cohort } = process.env;
+    const url = `/api/${cohort}/attendance/last-signin`;
     axios.get(url)
       .then(resp => {
         const lastSignin = resp.data.timeIn && new Date(resp.data.timeIn);
@@ -43,7 +44,8 @@ class AttendanceBanner extends Component {
 
   handleSignin = (e) => {
     this.setState({ loading: true });
-    const url = `/api/attendance/signin`;
+    const { REACT_APP_COHORT: cohort } = process.env;
+    const url = `/api/${cohort}/attendance/signin`;
     const now = new Date();
     const data = { date: now };
     axios.post(url, data)
