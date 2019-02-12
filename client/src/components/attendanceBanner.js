@@ -42,12 +42,16 @@ class AttendanceBanner extends Component {
     this.fetchLastSignin();
   }
 
-  handleSignin = (e) => {
+  handleSignin = async (e) => {
     this.setState({ loading: true });
     const { REACT_APP_COHORT: cohort } = process.env;
     const url = `/api/${cohort}/attendance/signin`;
     const now = new Date();
-    const data = { date: now };
+    const { data: ip } = await axios.get('https://api.ipify.org');
+    const data = {
+      date: now,
+      ip
+    };
     axios.post(url, data)
       .then(resp => this.fetchLastSignin())
       .catch(err => {

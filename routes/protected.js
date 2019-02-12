@@ -65,10 +65,12 @@ router.get('/:cohort/code/:module/:file', isEnrolled, (req, res) => {
 
 router.post('/:cohort/attendance/signin', isEnrolled, async (req, res) => {
   const { CAMPUS_IP: campusIp } = process.env;
+  const { ip: userIp } = req.body;
   const date = new Date(req.body.date);
-  const { data: userIp } = await axios.get('https://api.ipify.org');
   if (campusIp !== userIp) {
-    return res.status(405).send('not on campus');
+    console.log(`User IP: ${userIp}`)
+    console.log(`Campus IP: ${campusIp}`)
+    return res.status(405).send(`${userIp} does not match campus IP address`);
   }
   db.Attendance.create({
     timeIn: date,
