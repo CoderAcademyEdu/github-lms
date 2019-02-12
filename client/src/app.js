@@ -10,6 +10,7 @@ import Github from './pages/github';
 import Challenge from './pages/challenge';
 import NotFound from './components/notFound';
 import Enrolment from './pages/enrolment';
+import AttendanceBanner from './components/attendanceBanner';
 import { isAuthenticated } from './utils/authentication';
 import styled from 'styled-components';
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -59,6 +60,7 @@ const App = () => (
     <Side></Side>
     <Page>
       <Navbar />
+      <AttendanceBanner />
       <Main>
         <Switch>
           <Route exact path="/" render={ () => <Redirect to="/modules"/> } />
