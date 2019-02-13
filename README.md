@@ -118,6 +118,7 @@ GITHUB_BASE_URL='https://api.github.com/repos/<owner-or-organisation>/<repo-name
 GITHUB_CLIENT_ID='<organisation-oauth-client-id>'
 GITHUB_CLIENT_SECRET='<organisation-oauth-client-secret>'
 GITHUB_CALLBACK='http://localhost:3000/github/callback'
+CAMPUS_IP=<external-IP-address-for-campus>
 ```
 
 `SECRET` is used for cookie sessions and can be any string you would like to set it to. I recommend randomly generating a complex string to improve security.
@@ -129,6 +130,8 @@ GITHUB_CALLBACK='http://localhost:3000/github/callback'
 `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` can be generated from a personal or organisation github account. You will need to generate one for local development and another the deployed version of the application. Go to `Settings > oAuth apps > New oAuth app`. Fill in anything as the application name. The homepage URL will be `http://localhost:3000` for running locally and the URL of your deployed app for the production version - `https://m0218.herokuapp.com` for example. Description can be anything you would like. `Authorization callback URL` should be `http://localhost:3000/github/callback` for development version, substituting the host for your deployed application for the production version - `https://m0218.herokuapp.com/github/callback` for example. Click `Register application` to create the ID and SECRET. Repeat the steps to create a production version.
 
 `GITHUB_CALLBACK` should be set to `http://localhost:3000/github/callback` in the `.env` file.
+
+`CAMPUS_IP` is the external IP address for the campus that the students will be studying from. This can be obtained by connecting to the campus WIFI and visiting [What's my IP?](http://www.whatsmyip.org/).
 
 Populate the client/.env file with:
 
@@ -189,7 +192,7 @@ Authorization callback URL: https://melb_2018.herokuapp.com/github/callback
 Set Heroku environment variables - see `Development` section for more information about each of the environment variables.
 
 ```
-heroku config:set REACT_APP_COHORT="MELB_2018" SECRET='<secret-for-session/cookie>' GITHUB_TOKEN='<generate-from-personal-github>' GITHUB_BASE_URL='<url-for-content>' GITHUB_CLIENT_ID='<get-from-github-oauth-page>' GITHUB_CLIENT_SECRET='<get-from-github-oauth-page>' DB_USER='<get-from-postgres-dashboard>' DB_PASSWORD='<get-from-postgres-dashboard>' DB_NAME='<get-from-postgres-dashboard>' DB_HOST='<get-from-postgres-dashboard>'
+heroku config:set REACT_APP_COHORT="MELB_2018" SECRET='<secret-for-session/cookie>' GITHUB_TOKEN='<generate-from-personal-github>' GITHUB_BASE_URL='<url-for-content>' GITHUB_CLIENT_ID='<get-from-github-oauth-page>' GITHUB_CLIENT_SECRET='<get-from-github-oauth-page>' DB_USER='<get-from-postgres-dashboard>' DB_PASSWORD='<get-from-postgres-dashboard>' DB_NAME='<get-from-postgres-dashboard>' DB_HOST='<get-from-postgres-dashboard>' CAMPUS_IP='<get-from-whatsmyip.org>'
 ```
 
 Add a heroku remote if git has not done this automatically for you
