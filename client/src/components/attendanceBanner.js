@@ -39,7 +39,7 @@ class AttendanceBanner extends Component {
   }
 
   componentDidMount() {
-    this.fetchLastSignin();
+    this.shouldDisplaySigninBanner() && this.fetchLastSignin();
   }
 
   handleSignin = async (e) => {
@@ -76,19 +76,17 @@ class AttendanceBanner extends Component {
   }
 
   shouldDisplaySigninBanner() {
-    const { loadingAttendance } = this.state;
-    return !loadingAttendance
-      && isAuthenticated()
+    return isAuthenticated()
       && isStudent()
       && this.currentTimeIsInClassHours()
       && this.userHasNotSignedInToday();
   }
 
   render() {
-    const { error, loading } = this.state;
+    const { error, loading, loadingAttendance } = this.state;
     if (error) { return <Banner>{error}</Banner>; }
     if (loading) { return <Banner>signing in...</Banner>; }
-    return this.shouldDisplaySigninBanner()
+    return (!loadingAttendance && this.shouldDisplaySigninBanner())
       ? <Signin onClick={this.handleSignin}>You have not signed in today. Click to sign in.</Signin>
       : null;
   }
