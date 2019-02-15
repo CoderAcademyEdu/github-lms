@@ -2,6 +2,12 @@
 
 An open-source LMS that authenticates with GitHub and uses a separate private repository for content management
 
+## Video Tutorials
+
+### Deployment
+
+https://youtu.be/2z8zrO5HSzk
+
 ## Development
 
 ### Dependencies
