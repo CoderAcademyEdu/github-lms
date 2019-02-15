@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import YouTubePlayer from 'react-player/lib/players/YouTube';
@@ -8,6 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import FileSaver from 'file-saver';
 import axios from 'axios';
 import { convertSpacesToUnderscores } from '../utils/pathToDisplay';
+import 'highlight.js/styles/github-gist.css'
+import hljs from 'highlight.js'
 
 const Download = styled.button`
   background-color: rgba(0, 0, 0, 0.05);
@@ -22,12 +24,12 @@ const Flex = styled.div`
   display: flex;
 `
 
-const LessonTemplate = (props) => {
+class LessonTemplate extends Component {
 
-  const downloadFile = (download) => {
+  downloadFile = (download) => {
     const { url: fileUrl, name } = download;
     const { REACT_APP_COHORT: cohort } = process.env;
-    const { module } = props.match.params;
+    const { module } = this.props.match.params;
     const url = `/api/${cohort}/download/${module}/${fileUrl}`;
     const options = {
       responseType: 'blob'
@@ -40,12 +42,12 @@ const LessonTemplate = (props) => {
       .catch(err => console.log(err));
   }
 
-  const renderDownloads = (downloads) => {
+  renderDownloads = (downloads) => {
     return (
       <Flex>
         {
           downloads.map(download => (
-            <Download key={download.name} onClick={() => downloadFile(download)}>
+            <Download key={download.name} onClick={() => this.downloadFile(download)}>
               <FontAwesomeIcon icon="download" /> { download.name }
             </Download>
           ))
@@ -54,7 +56,7 @@ const LessonTemplate = (props) => {
     );
   }
 
-  const renderFrontMatter = (fm) => {
+  renderFrontMatter = (fm) => {
     const { title, lecture_video, downloads } = fm;
     return (
       <>
@@ -74,23 +76,44 @@ const LessonTemplate = (props) => {
               }}
             />
         }
-        { downloads && renderDownloads(downloads) }
+        { downloads && this.renderDownloads(downloads) }
       </>
     );
   }
 
-  const { fm, body } = props;
-  return (
-    <>
-      { fm && renderFrontMatter(fm) }
-      { body &&
+  convertCodeBlocks() {
+    const codeBlocks = document.querySelectorAll('code')
+    codeBlocks.forEach((el) => {
+      el.innerHTML = hljs.highlightAuto(el.innerText).value
+    })
+  }
+
+  renderBody(body) {
+    return (
+      <div className="markdown-body">
+        <div id="code">
           <ReactMarkdown
             source={body}
             escapeHtml={false}
           />
-      }
-    </>
-  );
+        </div>
+      </div>
+    )
+  }
+
+  componentDidMount() {
+    this.convertCodeBlocks()
+  }
+
+  render() {
+    const { fm, body } = this.props;
+    return (
+      <>
+        { fm && this.renderFrontMatter(fm) }
+        { body && this.renderBody(body) }
+      </>
+    );
+  }
 }
 
 export default withRouter(LessonTemplate);
