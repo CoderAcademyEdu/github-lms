@@ -8,8 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import FileSaver from 'file-saver';
 import axios from 'axios';
 import { convertSpacesToUnderscores } from '../utils/pathToDisplay';
-import 'highlight.js/styles/github-gist.css'
-import hljs from 'highlight.js'
+import CodeBlock from './CodeBlock'
+import './lessonTemplate.css'
 
 const Download = styled.button`
   background-color: rgba(0, 0, 0, 0.05);
@@ -81,28 +81,16 @@ class LessonTemplate extends Component {
     );
   }
 
-  convertCodeBlocks() {
-    const codeBlocks = document.querySelectorAll('code')
-    codeBlocks.forEach((el) => {
-      el.innerHTML = hljs.highlightAuto(el.innerText).value
-    })
-  }
-
   renderBody(body) {
     return (
-      <div className="markdown-body">
-        <div id="code">
+        <div className="container">
           <ReactMarkdown
             source={body}
             escapeHtml={false}
+            renderers={{ code: CodeBlock }}
           />
         </div>
-      </div>
     )
-  }
-
-  componentDidMount() {
-    this.convertCodeBlocks()
   }
 
   render() {
