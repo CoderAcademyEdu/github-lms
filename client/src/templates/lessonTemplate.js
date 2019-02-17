@@ -8,8 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import FileSaver from 'file-saver';
 import axios from 'axios';
 import { convertSpacesToUnderscores } from '../utils/pathToDisplay';
-import CodeBlock from './CodeBlock'
-import './lessonTemplate.css'
+import CodeBlocks from '../utils/codeBlocks'
+import '../styles/lessonTemplate.css'
 
 const Download = styled.button`
   background-color: rgba(0, 0, 0, 0.05);
@@ -87,7 +87,7 @@ class LessonTemplate extends Component {
           <ReactMarkdown
             source={body}
             escapeHtml={false}
-            renderers={{ code: CodeBlock }}
+            renderers={{ code: CodeBlocks }}
           />
         </div>
     )
