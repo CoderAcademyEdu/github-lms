@@ -23,3 +23,7 @@ code {
   font-size: 14px;
   font-family: 'Menlo';
 }
+
+ul, ol {
+  padding-left: 20px;
+}
